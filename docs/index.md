@@ -106,7 +106,7 @@ Explore advanced features and customization options:| **[NTFY Alerts](ntfy.md)**
 
 **Quick command:**
 ```bash
-npm run creator -- -y backup@gmail.com https://rewards.bing.com/welcome?rh=YOUR_CODE
+npm run creator -- -y backup@gmail.com "https://rewards.bing.com/welcome?rh=YOUR_CODE"
 ```
 
 ---

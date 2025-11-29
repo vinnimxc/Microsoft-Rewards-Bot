@@ -134,7 +134,7 @@ npm start
 npm run creator
 
 # Quick mode with referral
-npm run creator -- -y backup@gmail.com https://rewards.bing.com/welcome?rh=CODE
+npm run creator -- -y backup@gmail.com "https://rewards.bing.com/welcome?rh=CODE&ref=..."
 ```
 
 ### **Troubleshooting** (Issues)
@@ -228,7 +228,7 @@ Automatically create new Microsoft accounts with advanced security features:
 npm run creator
 
 # With auto-accept and recovery email (copy-paste URL directly from Microsoft)
-npm run creator -- -y backup@gmail.com https://rewards.bing.com/welcome?rh=YOUR_CODE
+npm run creator -- -y backup@gmail.com "https://rewards.bing.com/welcome?rh=YOUR_CODE"
 ```
 
 **✨ Features:**

@@ -246,7 +246,7 @@ npm run dashboard-dev
 npm run creator
 
 # With auto-accept and recovery email (copy-paste URL directly from Microsoft)
-npm run creator -- -y backup@gmail.com https://rewards.bing.com/welcome?rh=YOUR_CODE
+npm run creator -- -y backup@gmail.com "https://rewards.bing.com/welcome?rh=YOUR_CODE"
 ```
 
 **When to use:**

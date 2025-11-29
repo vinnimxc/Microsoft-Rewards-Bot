@@ -36,7 +36,7 @@ npm run creator -- https://rewards.bing.com/welcome?rh=YOUR_CODE
 npm run creator -- -y https://rewards.bing.com/welcome?rh=YOUR_CODE
 
 # With specific recovery email (full automation) - RECOMMENDED ORDER
-npm run creator -- -y backup@gmail.com https://rewards.bing.com/welcome?rh=YOUR_CODE
+npm run creator -- -y backup@gmail.com "https://rewards.bing.com/welcome?rh=YOUR_CODE"
 
 # Minimal - just recovery email without referral
 npm run creator -- -y myrecovery@gmail.com
@@ -87,7 +87,7 @@ npm run creator -- -y
 npm run creator -- -y https://rewards.bing.com/welcome?rh=B395E9D7
 
 # Full automation with specific recovery email (no prompts)
-npm run creator -- -y backup@gmail.com https://rewards.bing.com/welcome?rh=B395E9D7
+npm run creator -- -y backup@gmail.com "https://rewards.bing.com/welcome?rh=B395E9D7"
 
 # Just with recovery email, no referral
 npm run creator -- -y myrecovery@example.com

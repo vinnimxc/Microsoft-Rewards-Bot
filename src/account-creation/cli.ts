@@ -3,6 +3,22 @@ import { MicrosoftRewardsBot } from '../index'
 import { log } from '../util/notifications/Logger'
 import { AccountCreator } from './AccountCreator'
 
+import * as readline from 'readline'
+
+async function askForUrl(): Promise<string> {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  })
+
+  return new Promise((resolve) => {
+    rl.question('   👉 Please paste the FULL URL here: ', (answer) => {
+      rl.close()
+      resolve(answer.trim())
+    })
+  })
+}
+
 async function main(): Promise<void> {
   // Parse command line args
   const args = process.argv.slice(2)
@@ -21,17 +37,37 @@ async function main(): Promise<void> {
     } else if (arg.includes('@')) {
       // Auto-detect email addresses
       recoveryEmail = arg
-    } else if (arg.startsWith('ref=') || arg.startsWith('form=') || arg.startsWith('CREA=')) {
+    } else if (referralUrl && (arg.includes('=') || arg.startsWith('&'))) {
       // SMART FIX: Detect leftover URL fragments from CMD/PowerShell & splitting
       // When user forgets quotes, CMD splits at & and passes fragments as separate args
-      // We silently ignore these fragments (only the rh= code matters anyway)
-      // Example: "https://...?rh=CODE&ref=X&form=Y" becomes ["https://...?rh=CODE", "ref=X", "form=Y"]
-      continue // Ignore these - they're optional tracking parameters
+      // We append these fragments back to the URL to preserve the full link
+      // Example: "https://...?rh=CODE&ref=X" becomes ["https://...?rh=CODE", "ref=X"]
+      const fragment = arg.startsWith('&') ? arg.substring(1) : arg
+      referralUrl += '&' + fragment
+      log(false, 'CREATOR-CLI', `🔗 Re-attached URL fragment: &${fragment}`, 'log', 'gray')
     }
   }
 
   // AUTO-FIX: Ensure referral URL has &new=1 parameter (REQUIRED for referral to work)
   if (referralUrl) {
+    // WARNING: Check for truncated URL (common issue with PowerShell/CMD)
+    if (referralUrl.includes('rh=') && !referralUrl.includes('ref=')) {
+      log(false, 'CREATOR-CLI', '', 'log')
+      log(false, 'CREATOR-CLI', '⚠️  POSSIBLE URL TRUNCATION DETECTED', 'warn', 'yellow')
+      log(false, 'CREATOR-CLI', '   The referral URL seems to be missing parameters (ref=, form=, etc.)', 'warn', 'yellow')
+      log(false, 'CREATOR-CLI', '   This usually happens because the "&" character cuts off the command.', 'warn', 'yellow')
+
+      // INTERACTIVE FIX: Ask user to paste the full URL
+      log(false, 'CREATOR-CLI', '   🛑 AUTOMATIC PAUSE: To prevent failure, please provide the full URL.', 'warn', 'yellow')
+      const newUrl = await askForUrl()
+      if (newUrl && newUrl.startsWith('http')) {
+        referralUrl = newUrl
+        log(false, 'CREATOR-CLI', '✅ URL updated successfully!', 'log', 'green')
+      } else {
+        log(false, 'CREATOR-CLI', '⚠️  Invalid URL provided, continuing with truncated URL...', 'warn', 'yellow')
+      }
+    }
+
     // Remove any existing &new=1 to avoid duplication
     referralUrl = referralUrl.replace(/&new=1/g, '')
 
@@ -61,9 +97,10 @@ async function main(): Promise<void> {
     log(false, 'CREATOR-CLI', '📖 Usage Examples:', 'log', 'cyan')
     log(false, 'CREATOR-CLI', '   npm run creator -- -y                                    # Auto mode', 'log', 'gray')
     log(false, 'CREATOR-CLI', '   npm run creator -- -y email@gmail.com                     # With recovery email', 'log', 'gray')
-    log(false, 'CREATOR-CLI', '   npm run creator -- -y email@gmail.com https://rewards...  # Full automation', 'log', 'gray')
+    log(false, 'CREATOR-CLI', '   npm run creator -- -y email@gmail.com "https://rewards..." # Full automation (QUOTES REQUIRED!)', 'log', 'gray')
     log(false, 'CREATOR-CLI', '', 'log')
     log(false, 'CREATOR-CLI', '⚠️  IMPORTANT: Put -y and email BEFORE the URL!', 'warn', 'yellow')
+    log(false, 'CREATOR-CLI', '⚠️  IMPORTANT: Always put QUOTES around the URL if it contains "&"', 'warn', 'yellow')
     log(false, 'CREATOR-CLI', '', 'log')
   }
 
